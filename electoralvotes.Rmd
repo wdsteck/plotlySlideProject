@@ -1,0 +1,57 @@
+---
+title: "2016 US Election Results"
+author: "Bill Martersteck"
+date: "11/15/2016"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(plotly)
+options(warn = -1) 
+```
+
+## Electoral Votes
+
+- US Election held on 11/8/2016
+- Each US State and the District of Columbia are given a number of electoral votes to award
+to the presidential candidate as defined by state law.
+- Each state gets an electoral vote for each US Senator and each House of Representative member (for a minimum of 3). More populous states, therefore, award more electoral votes.
+- The District of Columbia gets to award 3 Electoral Votes. This right was granted
+by the 23rd Ammendment to the Constitution.
+- Donald Trump (R) won the 2016 Presidential Election by winning a majority of electoral votes.
+
+## 2016 State Electoral Votes and Election Results
+
+```{r, echo=FALSE, message=FALSE}
+# Create data frame
+evdf <- read.csv("election.csv", stringsAsFactors=FALSE)
+evdf$Declared = as.factor(evdf$Declared)
+evdf$Winner = ifelse(evdf$Clinton.EV>evdf$Trump.EV,"Clinton","Trump")
+
+# Create hover text
+evdf$hover <- with(evdf, paste0(State, '<br>',
+            sprintf("Population: %.2f M<br>", Population/(10^6)),
+            sprintf("Electoral Votes: %i<br>", State.EV),
+            sprintf("Clinton %% of Votes: %.2f<br>", (Clinton*100)/(Clinton+Trump+Others)),
+            sprintf("Trump %% of Votes: %.2f<br>", (Trump*100)/(Clinton+Trump+Others)),
+            "Clinton EV: ", ifelse(evdf$Declared=="Decided",evdf$Clinton.EV,"Undecided"), "<br>",
+            "Trump EV: ", ifelse(evdf$Declared=="Decided",evdf$Trump.EV,"Undecided")
+            ))
+
+# Make state borders white
+borders <- list(color = toRGB("white"))
+# Set up some mapping options
+map_options <- list(
+  scope = 'usa',
+  projection = list(type = 'albers usa'),
+  showlakes = FALSE
+)
+
+plot_ly(z = evdf$State.EV, text = evdf$hover, locations = evdf$St, 
+        type = 'choropleth', locationmode = 'USA-states', 
+        color = evdf$State.EV, marker = list(line = borders)) %>%
+        layout(geo = map_options)
+
+
+```
