@@ -11,15 +11,29 @@ library(plotly)
 options(warn = -1) 
 ```
 
+```{r, echo=FALSE, message=FALSE}
+# Create data frame
+evdf <- read.csv("election.csv", stringsAsFactors=FALSE)
+evdf$Declared = as.factor(evdf$Declared)
+evdf$Winner = ifelse(evdf$Clinton.EV>evdf$Trump.EV,"Clinton","Trump")
+```
 ## Electoral Votes
 
 - US Election held on 11/8/2016
-- Each US State and the District of Columbia are given a number of electoral votes to award
-to the presidential candidate as defined by state law.
-- Each state gets an electoral vote for each US Senator and each House of Representative member (for a minimum of 3). More populous states, therefore, award more electoral votes.
-- The District of Columbia gets to award 3 Electoral Votes. This right was granted
-by the 23rd Ammendment to the Constitution.
-- Donald Trump (R) won the 2016 Presidential Election by winning a majority of electoral votes.
+- To win,
+a candidate must win a majority of the
+electoral votes (`r round(sum(evdf$State.EV)/2 + .5)`).
+- Each US State and the District of Columbia are given
+a electoral votes to award
+to the presidential candidate their state chooses.
+- Each state gets an electoral vote for each Senator
+and each House of Representative member (for a minimum of 3).
+Since the number of house members a state has is dictated
+by population, the more populous states award more electoral votes.
+- The District of Columbia,
+as dictated by the 23rd Amendment to the Constitution,
+awards 3 Electoral Votes.
+- Donald Trump won the 2016 Election with `r sum(evdf$Trump.EV)` electoral votes.
 
 ## 2016 State Electoral Votes and Election Results
 
